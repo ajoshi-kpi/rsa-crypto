@@ -24,14 +24,23 @@ public class MillerRabbinPrimaryTest implements PrimaryTest {
 
     private boolean testIsPrimaryByRabbin(BigInteger number) {
         utils = new MillerRabinUtils(number);
-        if (utils.testGcd(number)) {
-            return false;
+        for (int i = 0; i < K; i++) {
+            if (utils.testGcd(number)) {
+                return false;
+            }
+            if (utils.testIfEqualsOne(number)) {
+                return true;
+            }
+            if (utils.testIfSimpleInCycle(number).equals(MillerRabinUtils.SimplicityStatus.SIMPLE)) {
+                return true;
+            } else if (utils.testIfSimpleInCycle(number).equals(MillerRabinUtils.SimplicityStatus.NON_SIMPLE)) {
+                return false;
+            }
         }
-        //TODO
-        return true;
+        return false;
     }
 
-    private class MillerRabinUtils {
+    private static class MillerRabinUtils {
 
         private BigInteger number;
         private BigInteger s = BigInteger.ZERO;
@@ -52,13 +61,35 @@ public class MillerRabbinPrimaryTest implements PrimaryTest {
         }
 
         private BigInteger getGCD(BigInteger number, BigInteger x) {
+            this.x = x;
             return number.gcd(x);
         }
 
         private boolean testGcd(BigInteger number) {
             Random randomGenerator = new Random(number.longValue());
-            long l = randomGenerator.nextLong();
-            return getGCD(number, BigInteger.valueOf(randomGenerator.nextLong())).equals(BigInteger.ONE);
+            return !getGCD(number, BigInteger.valueOf(randomGenerator.nextLong())).equals(BigInteger.ONE);
+        }
+
+        private boolean testIfEqualsOne(BigInteger p) {
+            return x.modPow(d, p).equals(BigInteger.ONE);
+        }
+
+        private SimplicityStatus testIfSimpleInCycle(BigInteger p) {
+            for (int i = 0; i < s.intValue() - 1; i++) {
+                BigInteger xr = x.modPow(d.multiply(BigInteger.valueOf(2).pow(i)), p);
+                if (xr.equals(p.subtract(BigInteger.ONE))) {
+                    return SimplicityStatus.SIMPLE;
+                } else if (xr.equals(BigInteger.ONE)) {
+                    return SimplicityStatus.NON_SIMPLE;
+                }
+            }
+            return SimplicityStatus.UNDEFINED;
+        }
+
+        private enum SimplicityStatus {
+            SIMPLE,
+            NON_SIMPLE,
+            UNDEFINED
         }
     }
 }
