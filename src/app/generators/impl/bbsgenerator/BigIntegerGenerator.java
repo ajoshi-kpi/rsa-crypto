@@ -16,7 +16,7 @@ public class BigIntegerGenerator implements GenericGenerator<BigInteger> {
         IntGenerator intGenerator = new BBSBitGenerator(BigInteger.valueOf(initialStateGenerator.nextLong()));
 
         return Stream.iterate(0, n -> n + 1)
-                .limit(256)
+                .limit(BITS_NUMBER)
                 .map(BigInteger::valueOf)
                 .reduce(BigInteger.ZERO,
                         (num1, num2) ->
