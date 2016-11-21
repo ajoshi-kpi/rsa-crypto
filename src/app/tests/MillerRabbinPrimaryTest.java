@@ -25,7 +25,7 @@ public class MillerRabbinPrimaryTest implements PrimaryTest {
     private boolean testIsPrimaryByRabbin(BigInteger number) {
         utils = new MillerRabinUtils(number);
         for (int i = 0; i < K; i++) {
-            if (utils.testGcd(number)) {
+            if (!utils.testGcd(number)) {
                 return false;
             }
             if (utils.testIfEqualsOne(number)) {
@@ -46,6 +46,7 @@ public class MillerRabbinPrimaryTest implements PrimaryTest {
         private BigInteger s = BigInteger.ZERO;
         private BigInteger d;
         private BigInteger x;
+        Random randomGenerator;
 
         public MillerRabinUtils(BigInteger number) {
             this.number = number.subtract(BigInteger.ONE);
@@ -60,14 +61,21 @@ public class MillerRabbinPrimaryTest implements PrimaryTest {
             d = number;
         }
 
+        private boolean testGcd(BigInteger number) {
+            if (randomGenerator == null) {
+                randomGenerator = new Random();
+            }
+            BigInteger currentBase = BigInteger.valueOf(randomGenerator.nextLong() % number.longValue());
+            if(currentBase.compareTo(BigInteger.ZERO) == -1) {
+                currentBase = currentBase.add(number);
+            }
+            return getGCD(number, currentBase).equals(BigInteger.ONE) ||
+                    getGCD(number, currentBase).equals(number);
+        }
+
         private BigInteger getGCD(BigInteger number, BigInteger x) {
             this.x = x;
             return number.gcd(x);
-        }
-
-        private boolean testGcd(BigInteger number) {
-            Random randomGenerator = new Random(number.longValue());
-            return !getGCD(number, BigInteger.valueOf(randomGenerator.nextLong())).equals(BigInteger.ONE);
         }
 
         private boolean testIfEqualsOne(BigInteger p) {
