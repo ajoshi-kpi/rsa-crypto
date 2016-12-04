@@ -1,10 +1,9 @@
 package app;
 
-import app.rsa.consumers.Consumer;
 import app.rsa.keygenerators.KeyGenerator;
 import app.rsa.keys.PrivateKey;
 import app.rsa.keys.PublicKey;
-import app.rsa.subscribers.Subscriber;
+import app.rsa.rsacryptoutil.Rsa;
 
 import java.math.BigInteger;
 
@@ -14,13 +13,14 @@ import java.math.BigInteger;
 public class TestRsa {
     public static void main(String[] args) {
         KeyGenerator keyGenerator = new KeyGenerator();
-        PrivateKey privateKey = keyGenerator.generatePrivateKey();
         PublicKey publicKey = keyGenerator.generatePublicKey();
+        PrivateKey privateKey = keyGenerator.generatePrivateKey();
 
-        Consumer consumer = new Consumer(publicKey);
-        consumer.setPrivateKey(privateKey);
-        Subscriber subscriber = new Subscriber(privateKey, consumer);
+        BigInteger plainText = new BigInteger("123123", 16);
+        Rsa rsa = new Rsa();
+        BigInteger cipherText = rsa.encrypt(plainText, publicKey);
 
-        System.out.println(subscriber.sendMessageToConsumer(BigInteger.valueOf(166L)));
+        BigInteger decrypt = rsa.decrypt(cipherText, privateKey);
+        System.out.println(decrypt.toString(16));
     }
 }

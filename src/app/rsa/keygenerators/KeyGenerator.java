@@ -13,12 +13,8 @@ public class KeyGenerator {
 
     private final BigInteger P = PrimaryNumbersHolder.getNextBigPrimary();
     private final BigInteger Q = PrimaryNumbersHolder.getNextBigPrimary();
-    private final BigInteger N;
+    private final BigInteger N = P.multiply(Q);
     private final BigInteger E = BigInteger.valueOf(2L).pow(16).add(BigInteger.ONE);
-
-    public KeyGenerator() {
-        N = P.multiply(Q);
-    }
 
     public PublicKey generatePublicKey() {
         return new PublicKey(N, E);
@@ -29,6 +25,6 @@ public class KeyGenerator {
     }
 
     private BigInteger getD() {
-        return E.modInverse(N);
+        return E.modInverse(P.subtract(BigInteger.ONE).multiply(Q.subtract(BigInteger.ONE)));
     }
 }

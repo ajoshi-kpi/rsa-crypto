@@ -27,4 +27,13 @@ public class PrivateKey {
     public BigInteger getQ() {
         return q;
     }
+
+    @Override
+    public String toString() {
+        return "PrivateKey{" +
+                "q=" + q +
+                ", p=" + p +
+                ", d=" + d +
+                '}';
+    }
 }

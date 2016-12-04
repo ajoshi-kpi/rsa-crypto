@@ -9,9 +9,9 @@ public class PublicKey {
     private BigInteger n;
     private BigInteger e;
 
-    public PublicKey(BigInteger n, BigInteger q) {
+    public PublicKey(BigInteger n, BigInteger e) {
         this.n = n;
-        this.e = q;
+        this.e = e;
     }
 
     public BigInteger getN() {
@@ -20,5 +20,13 @@ public class PublicKey {
 
     public BigInteger getE() {
         return e;
+    }
+
+    @Override
+    public String toString() {
+        return "PublicKey{" +
+                "n=" + n +
+                ", e=" + e +
+                '}';
     }
 }
