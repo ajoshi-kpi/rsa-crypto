@@ -16,6 +16,8 @@ public class TestRsa {
     private static PublicKey publicKey = keyGenerator.generatePublicKey();
     private static PrivateKey privateKey = keyGenerator.generatePrivateKey();
     public static void main(String[] args) {
+        System.out.println(publicKey.getE().toString(16));
+        System.out.println(publicKey.getN().toString(16));
         testRsaSignature();
     }
 
@@ -33,6 +35,7 @@ public class TestRsa {
         Rsa rsa = new Rsa();
         BigInteger plainText = new BigInteger("123123", 16);
         SignedMessage signedMessage = rsa.getSignedMessage(plainText, privateKey);
+        System.out.println(signedMessage.getSignature().toString(16));
         System.out.println(rsa.checkMessage(signedMessage, publicKey));
     }
 }
