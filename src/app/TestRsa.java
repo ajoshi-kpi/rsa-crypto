@@ -18,7 +18,7 @@ public class TestRsa {
     public static void main(String[] args) {
         System.out.println(publicKey.getE().toString(16));
         System.out.println(publicKey.getN().toString(16));
-        testRsaSignature();
+        testKeysSendingProtocol();
     }
 
     public static void testEncryption() {
@@ -37,5 +37,27 @@ public class TestRsa {
         SignedMessage signedMessage = rsa.getSignedMessage(plainText, privateKey);
         System.out.println(signedMessage.getSignature().toString(16));
         System.out.println(rsa.checkMessage(signedMessage, publicKey));
+    }
+
+    public static void testKeysSendingProtocol() {
+        Rsa rsa = new Rsa();
+        KeyGenerator aKeyGenerator = new KeyGenerator();
+        PublicKey aPublicKey = aKeyGenerator.generatePublicKey();
+        PrivateKey aPrivateKey = aKeyGenerator.generatePrivateKey();
+
+        final BigInteger keyToSend = new BigInteger("123123");
+        BigInteger k1 = rsa.encrypt(keyToSend, publicKey);
+        BigInteger s = rsa.decrypt(keyToSend, aPrivateKey);
+        BigInteger s1 = rsa.encrypt(s, publicKey);
+
+        System.out.println(checkKey(k1, s1, privateKey, aPublicKey));
+    }
+
+    private static boolean checkKey(BigInteger k1, BigInteger s1, PrivateKey privateKey, PublicKey aPublicKey) {
+        Rsa rsa = new Rsa();
+        BigInteger k = rsa.decrypt(k1, privateKey);
+        BigInteger s = rsa.decrypt(s1, privateKey);
+
+        return k.equals(s.modPow(aPublicKey.getE(), aPublicKey.getN()));
     }
 }
